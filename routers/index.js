@@ -69,9 +69,10 @@ router.post("/api/users/:_id/exercises", async (req, res) => {
     const exercise = {
       description,
       duration,
+      date,
     }
 
-    res.json(exercise)
+    res.json({ _id, username: query.username, exercise })
   } catch (err) {
     res.send("An error encountered")
   }

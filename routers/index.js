@@ -47,32 +47,36 @@ router.post("/api/users/:_id/exercises", async (req, res) => {
   let workoutDuration = parseInt(duration)
 
   if (!date) {
-    const options = { weekday: "short", year: "numeric", month: "short", day: "numeric" }
     date = new Date()
 
     // const today = date.toLocaleDateString('en', {day: "numeric"}) + "-" + (date.getMonth() + 1) + "-" + date.getDate()
-    const today = date
-      .toLocaleDateString("en-US", options)
-      .replace(/[.,\/#!$%\^&\*;:{}=\-_`~()]/g, "")
-
-    date = today
   }
+
+  const options = { weekday: "short", year: "numeric", month: "short", day: "numeric" }
+
+  const today = date
+    .toLocaleDateString("en-US", options)
+    .replace(/[.,\/#!$%\^&\*;:{}=\-_`~()]/g, "")
+
+  date = today
 
   try {
     // Check if user id exists
     const query = await User.findByIdAndUpdate(
       _id,
-      { $push: { log: { description, duration, date } } },
+      { $push: { log: { description, duration: workoutDuration, date } } },
       { new: true }
     )
 
-    const exercise = {
-      description,
-      duration,
-      date,
-    }
+    console.log(query.log)
 
-    res.json({ _id, username: query.username, exercise })
+    res.json({
+      _id,
+      username: query.username,
+      description,
+      date,
+      duration: workoutDuration,
+    })
   } catch (err) {
     res.send("An error encountered")
   }
